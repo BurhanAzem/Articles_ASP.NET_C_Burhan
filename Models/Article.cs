@@ -14,6 +14,6 @@ namespace Backend_Controller_Burhan.Models
         public int favoratesCount { get; set; }
         public User author { get; set; }
         public List<Comment> comment { get; set; }
-        public List<User> favorite { get; set; };
+        public List<User> favorite { get; set; }
     }
 }
