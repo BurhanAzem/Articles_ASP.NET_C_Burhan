@@ -129,7 +129,7 @@ namespace Backend_Controller_Burhan.Controllers
             if (result == null)
                 return NotFound("profil not found");
 
-            return Ok(result.);
+            return Ok(result);
         }
 
     }

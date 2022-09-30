@@ -14,6 +14,6 @@ namespace Backend_Controller_Burhan.Dtos
         public int favoratesCount { get; set; }
         public User author { get; set; }
         public List<Comment> comment { get; set; }
-        public bool favorite { get; set; } = false;
+        public List<User> favorite { get; set; }
     }
 }
