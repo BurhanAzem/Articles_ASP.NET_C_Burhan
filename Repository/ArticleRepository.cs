@@ -13,7 +13,7 @@ namespace Backend_Controller_Burhan.Repository
                 body = "ya-man-be-111",
                 slug = "11111111111",
                 title = "matrexman",
-                favorite = true,
+                favorite = null,
                 favoratesCount = 0,
                 description = "popopopopopo",
                 author = null,
@@ -33,7 +33,7 @@ namespace Backend_Controller_Burhan.Repository
                 body = "ya-man-be-222",
                 slug = "222222222222",
                 title = "matrexman",
-                favorite = true,
+                favorite = null,
                 favoratesCount = 0,
                 description = "popopopopopo",
                 author = null
