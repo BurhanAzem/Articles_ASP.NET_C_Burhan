@@ -8,16 +8,17 @@ namespace Backend_Controller_Burhan.Services
     {
         public Profile getprofile(string username)
         {
-            var user = UserRepository.Users.FirstOrDefault(o => o.profile.UserName == username);
+            var user = UserRepository.Users.FirstOrDefault(o => o.profile.username == username);
             if (user == null) return null;
             return user.profile;
         }
-        public Profile followOp(string username,UserDto CurrentuserDto, bool follow)
+        public Profile followOp(string username,string email, bool follow)
         {
-            var user = UserRepository.Users.FirstOrDefault(O => O.profile.UserName == username);
+            var user = UserRepository.Users.FirstOrDefault(O => O.profile.username == username);
+            var follower = UserRepository.Users.FirstOrDefault(O => O.email == email);
             if (user == null) return null;
-            if (follow) user.profile.follow.Add(CurrentuserDto.AsUser());
-            else user.profile.follow.Remove(CurrentuserDto.AsUser());
+            if (follow) user.profile.follow.Add(follower);
+            else user.profile.follow.Remove(follower);
             return user.profile;
         }
 

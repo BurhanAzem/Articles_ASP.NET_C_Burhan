@@ -6,7 +6,7 @@ namespace Backend_Controller_Burhan.Services
     public interface IProfileService
     {
         public Profile getprofile(string username);
-        public Profile followOp(string username,UserDto CurrentuserDto, bool follow);
+        public Profile followOp(string username, string email, bool follow);
 
 
     }

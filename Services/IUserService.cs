@@ -1,4 +1,5 @@
-﻿using Backend_Controller_Burhan.Models;
+﻿using Backend_Controller_Burhan.Dtos;
+using Backend_Controller_Burhan.Models;
 
 namespace Backend_Controller_Burhan.Services
 {

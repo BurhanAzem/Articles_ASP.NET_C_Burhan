@@ -1,9 +1,22 @@
-﻿using Backend_Controller_Burhan.Dtos;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Backend_Controller_Burhan.Services;
 using Backend_Controller_Burhan.Models;
-using System;
+using Microsoft.IdentityModel.Tokens;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Text;
+using Backend_Controller_Burhan.Repository;
+using Microsoft.AspNetCore.Authorization;
+using Backend_Controller_Burhan.Dtos;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Authentication;
+using System.Linq.Expressions;
+using System.Net.Mail;
+
 public static class EtintionesMethod
 {
-    public static ArticleDto AsArticleDto(this Article article)
+    public static ArticleDto AsArticleDto(this Article article, User user)
     {
         return new ArticleDto()
         {
@@ -13,37 +26,47 @@ public static class EtintionesMethod
             body = article.body,
             createdAt = article.createdAt,
             updatedAt = article.updatedAt,
-            favorited = article.favorited,
-            favoratesCount = article.favoratesCount,
+            favoritesCount = article.favoritesCount,
             author = article.author,
-            comment = article.comment,
-            favorite = article.favorite
+            favorited = article.favorite.Contains(user),
+        };
+    }
+    public static Article AsArticle(this ArticleDto articleDto, User user)
+    {
+        return new Article()
+        {
+            title = articleDto.title,
+            description = articleDto.description,
+            body = articleDto.body,
+            author = user
         };
     }
     public static UserDto AsUserDto(this User user)
     {
         return new UserDto()
         {
-              Password = user.Password,
-              Email = user.Email,
-              profile = user.profile
+              token = user.password,
+              email = user.email,
+              image = user.profile.image,
+              bio = user.profile.bio,
+              username = user.profile.username, 
         };
     }
-    public static ProfileDto AsProfileDto(this Profile profile)
+    public static ProfileDto AsProfileDto(this Profile profile, User user)
     {
         return new ProfileDto()
         {
-         UserName = profile.UserName,
-         bio = profile.bio,
-         image = profile.image,
-         follow = profile.follow
+            username = profile.username,
+            bio = profile.bio,
+            image = profile.image,
+            follow = profile.follow.Contains(user)
         };
     }
     public static CommentDto AsCommentDto(this Comment comment)
     {
         return new CommentDto()
         {
-            Id = comment.Id,
+            id = comment.id,
             createdAt = comment.createdAt,
             updatedAt = comment.updatedAt,
             body = comment.body,
@@ -54,20 +77,22 @@ public static class EtintionesMethod
     {
         return new User()
         {
-            Password = user.Password,
-            Email = user.Email,
-            profile = user.profile
+            password = user.token,
+            email = user.email,
+            profile = new Profile()
+            {
+                image = user.image,
+                bio = user.bio,
+                username = user.username,  
+            }
         };
     }
-    public static Comment AsComment(this CommentDto commentDto)
+    public static Comment AsComment(this CommentDto commentDto, User user)
     {
         return new Comment()
         {
-            Id = commentDto.Id,
-            createdAt = commentDto.createdAt,
-            updatedAt = commentDto.updatedAt,
             body = commentDto.body,
-            author = commentDto.author
+            author = user.profile
         };
     }
 }

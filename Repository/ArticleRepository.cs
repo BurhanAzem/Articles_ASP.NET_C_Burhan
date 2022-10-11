@@ -13,19 +13,41 @@ namespace Backend_Controller_Burhan.Repository
                 body = "ya-man-be-111",
                 slug = "11111111111",
                 title = "matrexman",
-                favorite = null,
-                favoratesCount = 0,
+                favoritesCount = 0,
                 description = "popopopopopo",
-                author = null,
+                author = new()
+                {
+                    profile = new()
+                    {
+                    username = "BurhanAzem",
+                    image = "higicgisbgcyugfuywcjyvuyecg",
+                    bio = "9iji99i899u8hi99j",
+                    follow = new()
+                        {
+                            new()
+                            {
+                                profile = new()
+                                 {
+                                username = "BurhanAzem",
+                                image = "higicgisbgcyugfuywcjyvuyecg",
+                                bio = "9iji99i899u8hi99j",
+                                },
+                            }
+                    }     
+                    } ,
+                email = "burhan12sab@gmail.com",
+                password = "my-password"
+                },
                 comment = new()
                 {
                     new()
                     {
-                        Id = 1,
+                        id = 1,
                         body = "i love you"
                     }
                 }
-            },
+            }
+            ,
             new()
             {
                 updatedAt = DateTime.Now,
@@ -33,10 +55,20 @@ namespace Backend_Controller_Burhan.Repository
                 body = "ya-man-be-222",
                 slug = "222222222222",
                 title = "matrexman",
-                favorite = null,
-                favoratesCount = 0,
+                favoritesCount = 0,
                 description = "popopopopopo",
-                author = null
+                author = new()
+                {
+                    profile = new()
+                {
+                    username = "BurhanAzem",
+                    image = "higicgisbgcyugfuywcjyvuyecg",
+                    bio = "9iji99i899u8hi99j",
+                    follow = null
+                } ,
+                email = "burhan12sab@gmail.com",
+                password = "my-password"
+                },
             }
         };
     }

@@ -2,10 +2,10 @@
 {
     public class Comment
     {
-        public int ?Id { get; set; }
+        public int ?id { get; set; } = 0;
         public DateTime ?createdAt { get; set; }
         public DateTime ?updatedAt { get; set; }
         public string body { get; set; }
-        public User author { get; set; }
+        public Profile author { get; set; }
     }
 }

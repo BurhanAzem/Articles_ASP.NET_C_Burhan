@@ -21,7 +21,7 @@ namespace Backend_Controller_Burhan.Controllers
     public class UserController : ControllerBase
     {
         private IUserService _userservices;
-        private IConfiguration _configuration;
+        private readonly  IConfiguration _configuration;
         //private IHttpContextAccessor _httpContextAccessor;
         //private  UserManager<IdentityUser> _userManager;
 
@@ -34,13 +34,14 @@ namespace Backend_Controller_Burhan.Controllers
         }
 
         // POST /api/users
-        [HttpPost("user")]
+        [HttpPost("users")]
         public IActionResult Register([FromBody] UserDto userDto)
         {
-            var old = _userservices.Register(userDto.AsUser());
-            if (old == null)
+            var user = _userservices.Register(userDto.AsUser());
+            if (user == null)
                 return NotFound("already registered");
-            return Ok(userDto);
+            var Dto = user.AsUserDto();
+            return Ok(Dto);
         }
 
         // GET /api/user
@@ -49,21 +50,22 @@ namespace Backend_Controller_Burhan.Controllers
         public IActionResult GetCurrent()
         {
             var currentUser = GetCurrentUser();
-
-            return Ok(currentUser);
+            var userDto = currentUser.AsUserDto();
+            return Ok(userDto);
         }
         // PUT /api/user
         [HttpPut("user")]
         [Authorize]
-        public IActionResult Update([FromBody] User newuser)
+        public IActionResult Update([FromBody] UserDto newuser)
         {
-            var result = _userservices.Update(newuser);
+            var result = _userservices.Update(newuser.AsUser());
             if (result == null)
                 return NotFound();
-            return Ok(result);
+            var userDto = result.AsUserDto();
+            return Ok(userDto);
         }
         
-        private UserDto GetCurrentUser()
+        private User GetCurrentUser()
         {
             var identity = HttpContext.User.Identity as ClaimsIdentity;
 
@@ -71,7 +73,7 @@ namespace Backend_Controller_Burhan.Controllers
             {
                 var userClaims = identity.Claims;
                 var Email = userClaims.FirstOrDefault(o => o.Type == ClaimTypes.Email)?.Value;
-                var CurrentUser = UserRepository.Users.FirstOrDefault(o => o.Email == Email).AsUserDto();
+                var CurrentUser = UserRepository.Users.FirstOrDefault(o => o.email == Email);
                 return CurrentUser;
             }
             return null;

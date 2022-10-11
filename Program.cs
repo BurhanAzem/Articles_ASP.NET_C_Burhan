@@ -16,27 +16,29 @@ var builder = WebApplication.CreateBuilder(args);
 ConfigurationManager configuration = builder.Configuration;
 
 
-builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-                .AddJwtBearer(options => {
-                    options.TokenValidationParameters = new TokenValidationParameters
-                    {
-                        ValidateIssuer = true,
-                        ValidateAudience = true,
-                        ValidateLifetime = true,
-                        ValidateIssuerSigningKey = true,
-                        ValidIssuer = configuration["Jwt:Issuer"],
-                        ValidAudience = configuration["Jwt:Audience"],
-                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["Jwt:Key"]))
-                    };
-                });
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(
+    Options =>
+    {
+        Options.TokenValidationParameters = new TokenValidationParameters()
+        {
+            ValidateActor = true,
+            ValidateAudience = true,
+            ValidateLifetime = true,
+            ValidateIssuerSigningKey = true,
+            ValidIssuer = builder.Configuration["Jwt:Issuer"],
+            ValidAudience = builder.Configuration["Jwt:Audience"],
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"])),
+        };
+    });
+builder.Services.AddAuthentication();
+builder.Services.AddAuthorization();
+builder.Services.AddEndpointsApiExplorer();
 
 builder.Services.AddMvc();
 builder.Services.AddControllers();
-builder.Services.AddAuthorization();
 builder.Services.AddSingleton<IProfileService, ProfileService>();
 builder.Services.AddSingleton<IArticaleService, ArticleService>();
 builder.Services.AddSingleton<IUserService, UserService>();
-builder.Services.AddHttpContextAccessor();
 builder.Services.AddRazorPages();
 var app = builder.Build();
 
@@ -49,14 +51,13 @@ if (!app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-app.UseStaticFiles();
-
+app.UseAuthentication();
 app.UseRouting();
- 
 app.UseAuthorization();
-app.UseAuthorization();
-
 app.MapControllers();
+
+
+
 app.MapRazorPages();
 
 app.Run();

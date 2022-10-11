@@ -4,30 +4,30 @@ using System.Text.RegularExpressions;
 using System.Text;
 using Backend_Controller_Burhan.Repository;
 using Backend_Controller_Burhan.Dtos;
+using System.Security.Cryptography;
 
 namespace Backend_Controller_Burhan.Services
 {
     public  class ArticleService : IArticaleService
     {
-        public Article Create(Article article)
+        public Article Create(Article article, User user)
         {
             article.createdAt = DateTime.Now;   
             article.updatedAt = DateTime.Now;
             article.slug = StringExtensions.Slugify(article.title);
-            article.author = null;
+            article.author = user;
             ArticleRepository.Articles.Add(article);
             return article;
         }
-        public Article Update(Article newarticle)
+        public Article Update(Article newarticle, string slug)
         {
-            var oldarticle = ArticleRepository.Articles.FirstOrDefault(x => x.slug.Equals(newarticle.slug));
+            var oldarticle = ArticleRepository.Articles.FirstOrDefault(x => x.slug.Equals(slug));
             if (oldarticle == null)
                 return null;
             oldarticle.title = newarticle.title;
             oldarticle.body = newarticle.body;
             oldarticle.description = newarticle.description;
-            oldarticle.slug = StringExtensions.Slugify(newarticle.title);
-            return newarticle;
+            return oldarticle;
         }
         public bool Delete(string slug)
         {
@@ -46,20 +46,36 @@ namespace Backend_Controller_Burhan.Services
             var article = ArticleRepository.Articles.FirstOrDefault(x => x.slug == slug);
             return article;
         }
-        public Article favoriteOp(string slug,UserDto CurrentUserDto, bool favorite)
+        public Article favoriteOp(string slug,User CurrentUserDto, bool favorite)
         {
             var article = ArticleRepository.Articles.FirstOrDefault(O => O.slug == slug);
             if (article == null) return null;
-            if (favorite) article.favorite.Add(CurrentUserDto.AsUser());
-            else article.favorite.Remove(CurrentUserDto.AsUser());
+            if (favorite) article.favorite.Add(CurrentUserDto);
+            else article.favorite.Remove(CurrentUserDto);
             return article;
         }
 
-        public CommentDto AddComment(string slug,CommentDto commentDto)
+        public Comment AddComment(string slug,Comment comment)
+        {
+            Random a = new Random();     
+            int MyNumber = 0;
+            MyNumber = a.Next(0, 10);
+            var article = ArticleRepository.Articles.FirstOrDefault(o => o.slug == slug);
+            if (article == null)
+                return null;
+            comment.updatedAt = DateTime.Now;   
+            comment.createdAt = DateTime.Now;
+            comment.id = MyNumber;    
+            article.comment.Add(comment);
+            return comment;
+        }
+        public bool DeleteComment(string slug, Comment comment)
         {
             var article = ArticleRepository.Articles.FirstOrDefault(o => o.slug == slug);
-            article.comment.Add(commentDto.AsComment());
-            return commentDto;
+            if (article == null)
+                return false;
+            article.comment.Remove(comment);
+            return true;
         }
     }
 }

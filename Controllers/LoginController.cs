@@ -15,9 +15,9 @@ using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace JwtApp.Controllers
+namespace Backend_Controller_Burhan.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/users")]
     [ApiController]
     public class LoginController : ControllerBase
     {
@@ -30,53 +30,61 @@ namespace JwtApp.Controllers
         }
         // POST /api/users/login
         [AllowAnonymous]
-        [HttpPost]
-        public IActionResult Login([FromBody] UserLoginDto userLogin)
+        [HttpPost("login")]
+        public IActionResult Login([FromBody] UserLogin userLogin)
         {
             var user = Authenticate(userLogin);
 
             if (user != null)
             {
                 var token = Generate(user);
-                return Ok(token);
+                var userDto = user.AsUserDto(); 
+                userDto.token = token;
+                return Ok(userDto);
             }
 
             return NotFound("User not found");
         }
 
-        private string Generate(UserDto user)
+        private string Generate(User user)
         {
-            var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Jwt:Key"]));
-            var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
 
-            var claims = new[]
-            {
-                new Claim(ClaimTypes.NameIdentifier, user.profile.UserName),
-                new Claim(ClaimTypes.Email, user.Email),
-                new Claim(ClaimTypes.GivenName, user.Email),
-                new Claim(ClaimTypes.Surname, user.Email),
-                new Claim(ClaimTypes.Role, user.Email)
-            };
+                var claims = new[]
+                {
+            new Claim(ClaimTypes.Dns, user.password),
+            new Claim(ClaimTypes.Email, user.email)
 
-            var token = new JwtSecurityToken(_config["Jwt:Issuer"],
-              _config["Jwt:Audience"],
-              claims,
-              expires: DateTime.Now.AddMinutes(15),
-              signingCredentials: credentials);
+                };
 
-            return new JwtSecurityTokenHandler().WriteToken(token);
-        }
+                var token = new JwtSecurityToken
+                    (
+                    issuer: _config["Jwt:Issuer"],
+                    audience: _config["Jwt:Audience"],
+                    claims: claims,
+                    expires: DateTime.UtcNow.AddDays(100),
+                    notBefore: DateTime.UtcNow,
+                    signingCredentials: new SigningCredentials(
+                        new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Jwt:key"])),
+                        SecurityAlgorithms.HmacSha256)
+                    );
+                var tokenString = new JwtSecurityTokenHandler().WriteToken(token);
+                return tokenString;
+            }
+            
 
-        private UserDto Authenticate(UserLoginDto userLogin)
+           
+        
+
+        private User Authenticate(UserLogin userLogin)
         {
-            var currentUser = _userService.GetL(userLogin);
-
+            var currentUser = UserRepository.Users.FirstOrDefault(x => x.email.ToLower() ==
+                userLogin.email.ToLower() && x.password == userLogin.password);
             if (currentUser != null)
             {
-                return currentUser.AsUserDto();
+                return currentUser;
             }
-
             return null;
+
         }
     }
 }

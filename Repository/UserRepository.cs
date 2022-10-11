@@ -10,25 +10,25 @@ namespace Backend_Controller_Burhan.Repository
             {
                 profile = new()
                 {
-                    UserName = "BurhanAzem",
+                    username = "BurhanAzem",
                     image = "higicgisbgcyugfuywcjyvuyecg",
                     bio = "9iji99i899u8hi99j",
                     follow = null
                 } ,
-                Email = "burhan12sab@gmail.com",
-                Password = "my-password"
+                email = "burhan12sab@gmail.com",
+                password = "my-password"
             },
             new()
             {
                 profile = new()
                 {
-                    UserName = "Areej",
+                    username = "Areej",
                     image = "higicgisbgcyugfuywcjyvuyecg",
                     bio = "9iji99i899u8hi99j",
                     follow = null
                 } ,
-                Email = "burhan13sab@gmail.com",
-                Password = "my-mom"
+                email = "burhan13sab@gmail.com",
+                password = "my-mom"
             }
         };
     }

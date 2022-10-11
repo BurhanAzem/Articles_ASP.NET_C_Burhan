@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 
-namespace Backend_Controller_Burhan.Controllers
+namespace Backend_Controller_Burhan.Controllerss
 {
     [Route("api/profiles")]
     [ApiController]
@@ -22,8 +22,9 @@ namespace Backend_Controller_Burhan.Controllers
         [HttpGet("{username}")]
         public IActionResult Get(string username)
         {
+            var user = GetCurrentUser();
 
-            var result = _profileService.getprofile(username).AsProfileDto();
+            var result = _profileService.getprofile(username).AsProfileDto(user);
 
             if (result == null)
                 return NotFound("profil not found");
@@ -34,13 +35,10 @@ namespace Backend_Controller_Burhan.Controllers
         // POST /api/profiles/:username/follow
         [HttpPost("{username}/{follow}")]
         [Authorize]
-        public IActionResult FollowOp([FromRoute]string username, bool follow)
+        public IActionResult FollowOp(string username, [FromRoute] string email)
         {
-            var identity = HttpContext.User.Identity as ClaimsIdentity;
-            var userClaims = identity.Claims;
-            var Email = userClaims.FirstOrDefault(o => o.Type == ClaimTypes.Email)?.Value;
-            var CurrentUser = UserRepository.Users.FirstOrDefault(o => o.Email == Email).AsUserDto();
-            var result = _profileService.followOp(username,CurrentUser, follow).AsProfileDto();
+            var user = GetCurrentUser();
+            var result = _profileService.followOp(username, email, true).AsProfileDto(user);
 
             if (result == null)
                 return NotFound("profil not found");
@@ -51,13 +49,10 @@ namespace Backend_Controller_Burhan.Controllers
         // DELETE /api/profiles/:username/follow
         [HttpDelete("{username}/{follow}")]
         [Authorize]
-        public IActionResult UnFollowOp([FromRoute] string username, bool follow)
+        public IActionResult UnFollowOp(string email, [FromRoute] string username)
         {
-            var identity = HttpContext.User.Identity as ClaimsIdentity;
-            var userClaims = identity.Claims;
-            var Email = userClaims.FirstOrDefault(o => o.Type == ClaimTypes.Email)?.Value;
-            var CurrentUser = UserRepository.Users.FirstOrDefault(o => o.Email == Email).AsUserDto();
-            var result = _profileService.followOp(username, CurrentUser, follow).AsProfileDto();
+            var user = GetCurrentUser();
+            var result = _profileService.followOp(username, email, false).AsProfileDto(user);
 
             if (result == null)
                 return NotFound("profil not found");
@@ -65,5 +60,18 @@ namespace Backend_Controller_Burhan.Controllers
             return Ok(result);
         }
 
+        public User GetCurrentUser()
+        {
+            var identity = HttpContext.User.Identity as ClaimsIdentity;
+
+            if (identity != null)
+            {
+                var userClaims = identity.Claims;
+                var Email = userClaims.FirstOrDefault(o => o.Type == ClaimTypes.Email)?.Value;
+                var CurrentUser = UserRepository.Users.FirstOrDefault(o => o.email == Email);
+                return CurrentUser;
+            }
+            return null;
+        }
     }
 }
