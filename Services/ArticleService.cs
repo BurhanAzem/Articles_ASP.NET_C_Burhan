@@ -15,7 +15,7 @@ namespace Backend_Controller_Burhan.Services
             article.createdAt = DateTime.Now;   
             article.updatedAt = DateTime.Now;
             article.slug = StringExtensions.Slugify(article.title);
-            article.author = user;
+            article.author = user.profile;
             ArticleRepository.Articles.Add(article);
             return article;
         }
@@ -50,8 +50,8 @@ namespace Backend_Controller_Burhan.Services
         {
             var article = ArticleRepository.Articles.FirstOrDefault(O => O.slug == slug);
             if (article == null) return null;
-            if (favorite) article.favorite.Add(CurrentUserDto);
-            else article.favorite.Remove(CurrentUserDto);
+            if (favorite) article.favorite.Add(CurrentUserDto.profile);
+            else article.favorite.Remove(CurrentUserDto.profile);
             return article;
         }
 

@@ -13,6 +13,6 @@ namespace Backend_Controller_Burhan.Dtos
         public List<string> ?tagList { get; set; } = new List<string>() { "reactjs", "angularjs" };
         public bool ? favorited { get; set; } = false;
         public int ? favoritesCount { get; set; }
-        public User ?author { get; set; }
+        public Profile ?author { get; set; }
     }
 }

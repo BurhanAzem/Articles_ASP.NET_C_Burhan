@@ -48,7 +48,7 @@ namespace Backend_Controller_Burhan.Controllers
         public IActionResult GetFeed()
         {
             var user = GetCurrentUser();
-            var result = ArticleRepository.Articles.FindAll(o => !o.author.profile.follow.IsNullOrEmpty()).Select(x => x.AsArticleDto(user));
+            var result = ArticleRepository.Articles.FindAll(o => !o.author.follow.IsNullOrEmpty()).Select(x => x.AsArticleDto(user));
             return Ok(result);
         }
 
@@ -57,7 +57,7 @@ namespace Backend_Controller_Burhan.Controllers
         public IActionResult GetByAuthor([FromQuery] string author)
         {
             var user = GetCurrentUser();
-            var result = ArticleRepository.Articles.FindAll(o => o.author.profile.username == author).Select(x => x.AsArticleDto(user));
+            var result = ArticleRepository.Articles.FindAll(o => o.author.username == author).Select(x => x.AsArticleDto(user));
             return Ok(result);
         }
 
@@ -66,7 +66,7 @@ namespace Backend_Controller_Burhan.Controllers
         public IActionResult GetByUsername([FromQuery] string username)
         {
             var user = GetCurrentUser();
-            var result = ArticleRepository.Articles.FindAll(o => o.favorite.FirstOrDefault(o => o.profile.username == username).profile.username == username).Select(x => x.AsArticleDto(user));
+            var result = ArticleRepository.Articles.FindAll(o => o.favorite.FirstOrDefault(o => o.username == username).username == username).Select(x => x.AsArticleDto(user));
             return Ok(result);
         }
 
@@ -75,8 +75,8 @@ namespace Backend_Controller_Burhan.Controllers
         public IActionResult GetByTagList([FromQuery] string tag)
         {
             var user = GetCurrentUser();
-            var result = ArticleRepository.Articles.FindAll(o => o.tagList.Contains(tag)).Select(x => x.AsArticleDto(user));
-            return Ok(result);
+            //var result = ArticleRepository.Articles.FindAll(o => o.tagList.Contains(tag)).Select(x => x.AsArticleDto(user));
+            return Ok();
         }
 
         // PUT /api/articles/:slug

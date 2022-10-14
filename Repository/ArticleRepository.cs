@@ -17,8 +17,7 @@ namespace Backend_Controller_Burhan.Repository
                 description = "popopopopopo",
                 author = new()
                 {
-                    profile = new()
-                    {
+                    
                     username = "BurhanAzem",
                     image = "higicgisbgcyugfuywcjyvuyecg",
                     bio = "9iji99i899u8hi99j",
@@ -26,17 +25,15 @@ namespace Backend_Controller_Burhan.Repository
                         {
                             new()
                             {
-                                profile = new()
-                                 {
+                                
                                 username = "BurhanAzem",
                                 image = "higicgisbgcyugfuywcjyvuyecg",
                                 bio = "9iji99i899u8hi99j",
-                                },
+                                follow = null
+                                
                             }
                     }     
-                    } ,
-                email = "burhan12sab@gmail.com",
-                password = "my-password"
+                    
                 },
                 comment = new()
                 {
@@ -59,15 +56,12 @@ namespace Backend_Controller_Burhan.Repository
                 description = "popopopopopo",
                 author = new()
                 {
-                    profile = new()
-                {
+                 
                     username = "BurhanAzem",
                     image = "higicgisbgcyugfuywcjyvuyecg",
                     bio = "9iji99i899u8hi99j",
                     follow = null
-                } ,
-                email = "burhan12sab@gmail.com",
-                password = "my-password"
+                
                 },
             }
         };

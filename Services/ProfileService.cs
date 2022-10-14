@@ -17,8 +17,8 @@ namespace Backend_Controller_Burhan.Services
             var user = UserRepository.Users.FirstOrDefault(O => O.profile.username == username);
             var follower = UserRepository.Users.FirstOrDefault(O => O.email == email);
             if (user == null) return null;
-            if (follow) user.profile.follow.Add(follower);
-            else user.profile.follow.Remove(follower);
+            if (follow) user.profile.follow.Add(follower.profile);
+            else user.profile.follow.Remove(follower.profile);
             return user.profile;
         }
 

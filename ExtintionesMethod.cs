@@ -28,7 +28,7 @@ public static class EtintionesMethod
             updatedAt = article.updatedAt,
             favoritesCount = article.favoritesCount,
             author = article.author,
-            favorited = article.favorite.Contains(user),
+            favorited = article.favorite.Contains(user.profile),
         };
     }
     public static Article AsArticle(this ArticleDto articleDto, User user)
@@ -38,7 +38,7 @@ public static class EtintionesMethod
             title = articleDto.title,
             description = articleDto.description,
             body = articleDto.body,
-            author = user
+            author = user.profile,
         };
     }
     public static UserDto AsUserDto(this User user)
@@ -59,7 +59,7 @@ public static class EtintionesMethod
             username = profile.username,
             bio = profile.bio,
             image = profile.image,
-            follow = profile.follow.Contains(user)
+            follow = profile.follow.Contains(user.profile)
         };
     }
     public static CommentDto AsCommentDto(this Comment comment)
