@@ -36,6 +36,7 @@ builder.Services.AddEndpointsApiExplorer();
 
 builder.Services.AddMvc();
 builder.Services.AddControllers();
+builder.Services.AddSingleton<DemoContext>();
 builder.Services.AddSingleton<IProfileService, ProfileService>();
 builder.Services.AddSingleton<IArticaleService, ArticleService>();
 builder.Services.AddSingleton<IUserService, UserService>();

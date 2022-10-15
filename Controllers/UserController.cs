@@ -51,6 +51,8 @@ namespace Backend_Controller_Burhan.Controllers
         {
             var currentUser = GetCurrentUser();
             var userDto = currentUser.AsUserDto();
+            if (userDto == null)
+                return NotFound();
             return Ok(userDto);
         }
         // PUT /api/user
@@ -73,7 +75,7 @@ namespace Backend_Controller_Burhan.Controllers
             {
                 var userClaims = identity.Claims;
                 var Email = userClaims.FirstOrDefault(o => o.Type == ClaimTypes.Email)?.Value;
-                var CurrentUser = UserRepository.Users.FirstOrDefault(o => o.email == Email);
+                var CurrentUser = _userservices.Get(Email);
                 return CurrentUser;
             }
             return null;

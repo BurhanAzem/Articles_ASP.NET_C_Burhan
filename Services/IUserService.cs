@@ -7,7 +7,7 @@ namespace Backend_Controller_Burhan.Services
     {
         public User Register(User user);
         public User Get(string email);
-        public User GetL(UserLoginDto userlogin);
+        public User GetL(UserLogin userlogin);
         public User Update(User user);
     }
 }

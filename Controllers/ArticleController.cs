@@ -16,9 +16,11 @@ namespace Backend_Controller_Burhan.Controllers
     public class ArticleController : ControllerBase
     {
         private IArticaleService _articaleService;
-        public ArticleController(IArticaleService articaleService)
+        private IUserService _userService;
+        public ArticleController(IArticaleService articaleService, IUserService userService)
         {
             _articaleService = articaleService;
+            _userService = userService; 
         }
 
         //POST /api/articles
@@ -28,6 +30,8 @@ namespace Backend_Controller_Burhan.Controllers
         {
             var user = GetCurrentUser();
             var result = _articaleService.Create(articleDto.AsArticle(user),user).AsArticleDto(user);
+            if (result == null)
+                return NotFound();
             return Ok(result);
         }
 
@@ -39,6 +43,8 @@ namespace Backend_Controller_Burhan.Controllers
         {
             var user = GetCurrentUser();
             var result = _articaleService.GetAll().Select(x => x.AsArticleDto(user));
+            if (result == null)
+                return NotFound();
             return Ok(result);
         }
 
@@ -48,7 +54,9 @@ namespace Backend_Controller_Burhan.Controllers
         public IActionResult GetFeed()
         {
             var user = GetCurrentUser();
-            var result = ArticleRepository.Articles.FindAll(o => !o.author.follow.IsNullOrEmpty()).Select(x => x.AsArticleDto(user));
+            var result = _articaleService.GetFeed().Select(x => x.AsArticleDto(user));
+            if (result == null)
+                return NotFound();
             return Ok(result);
         }
 
@@ -57,21 +65,27 @@ namespace Backend_Controller_Burhan.Controllers
         public IActionResult GetByAuthor([FromQuery] string author)
         {
             var user = GetCurrentUser();
-            var result = ArticleRepository.Articles.FindAll(o => o.author.username == author).Select(x => x.AsArticleDto(user));
+            var result = _articaleService.GetByAuthor(author).Select(x => x.AsArticleDto(user));
+            if (result == null)
+                return NotFound();
             return Ok(result);
         }
 
         // GET /api/articles?UserName=...
         [HttpGet("username")]
+        [Authorize]
         public IActionResult GetByUsername([FromQuery] string username)
         {
             var user = GetCurrentUser();
-            var result = ArticleRepository.Articles.FindAll(o => o.favorite.FirstOrDefault(o => o.username == username).username == username).Select(x => x.AsArticleDto(user));
+            var result = _articaleService.GetByUserName(username).Select(x => x.AsArticleDto(user));
+            if (result == null)
+                return NotFound();
             return Ok(result);
         }
 
         // GET /api/articles?tagList=...
         [HttpGet("tagList")]
+        [Authorize]
         public IActionResult GetByTagList([FromQuery] string tag)
         {
             var user = GetCurrentUser();
@@ -106,6 +120,8 @@ namespace Backend_Controller_Burhan.Controllers
         {
             var user = GetCurrentUser(); 
             var result = _articaleService.GetByslug(slug).AsArticleDto(user);
+            if (result == null)
+                return NotFound();
             return Ok(result);
         }
 
@@ -136,6 +152,8 @@ namespace Backend_Controller_Burhan.Controllers
         public IActionResult DeleteComments(string slug, int id)
         {
             var result = _articaleService.GetByslug(slug).comment.Remove(_articaleService.GetByslug(slug).comment.FirstOrDefault(o => o.id.Equals(id)));
+            if (result == null)
+                return NotFound();
             return Ok("Done");
         }
 
@@ -170,9 +188,11 @@ namespace Backend_Controller_Burhan.Controllers
         }
         [HttpGet]
         [Route("tags")]
+        [Authorize]
         public IActionResult GetTags()
         {
-            return Ok(ArticleRepository.Articles.First().tagList);
+            var result = _articaleService.GetAll();
+            return Ok(result);
         }
         public User GetCurrentUser()
         {
@@ -182,7 +202,7 @@ namespace Backend_Controller_Burhan.Controllers
             {
                 var userClaims = identity.Claims;
                 var Email = userClaims.FirstOrDefault(o => o.Type == ClaimTypes.Email)?.Value;
-                var CurrentUser = UserRepository.Users.FirstOrDefault(o => o.email == Email);
+                var CurrentUser = _userService.Get(Email);
                 return CurrentUser;
             }
             return null;

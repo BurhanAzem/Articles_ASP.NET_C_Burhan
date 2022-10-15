@@ -77,8 +77,7 @@ namespace Backend_Controller_Burhan.Controllers
 
         private User Authenticate(UserLogin userLogin)
         {
-            var currentUser = UserRepository.Users.FirstOrDefault(x => x.email.ToLower() ==
-                userLogin.email.ToLower() && x.password == userLogin.password);
+            var currentUser = _userService.GetL(userLogin);
             if (currentUser != null)
             {
                 return currentUser;

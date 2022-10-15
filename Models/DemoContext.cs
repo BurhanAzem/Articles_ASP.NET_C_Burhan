@@ -5,10 +5,10 @@ namespace Backend_Controller_Burhan.Models
 {
     public class DemoContext : DbContext
     {
-        public DbSet<Profile>profiles { get; set; }
+        public DbSet<Profile> profiles { get; set; }
         public DbSet<User> Users { get; set; }  
         public DbSet<Profile> Profiles { get; set; }
-        public  DbSet<Article> Articles { get; set; }
+        public DbSet<Article> Articles { get; set; }
 
         //protected override void OnModelCreating(ModelBuilder ModelBuilder)
         //{

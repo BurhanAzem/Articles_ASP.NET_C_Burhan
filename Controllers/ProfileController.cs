@@ -13,13 +13,16 @@ namespace Backend_Controller_Burhan.Controllerss
     public class ProfileController : ControllerBase
     {
         private IProfileService _profileService;    
-        public ProfileController(IProfileService profileService)
+        private IUserService _userService;
+        public ProfileController(IProfileService profileService, IUserService userService)
         {
             _profileService = profileService;
+            _userService = userService; 
         }
 
         // GET /api/profiles/:username
         [HttpGet("{username}")]
+        [Authorize]
         public IActionResult Get(string username)
         {
             var user = GetCurrentUser();
@@ -68,7 +71,7 @@ namespace Backend_Controller_Burhan.Controllerss
             {
                 var userClaims = identity.Claims;
                 var Email = userClaims.FirstOrDefault(o => o.Type == ClaimTypes.Email)?.Value;
-                var CurrentUser = UserRepository.Users.FirstOrDefault(o => o.email == Email);
+                var CurrentUser = _userService.Get(Email);
                 return CurrentUser;
             }
             return null;

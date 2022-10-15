@@ -13,6 +13,9 @@ namespace Backend_Controller_Burhan.Services
         public Comment AddComment(string slug, Comment comment);   
         public Article favoriteOp(string slug,User CurrentUserDto, bool favorite);
         public bool DeleteComment(string slug, Comment comment);
+        public List<Article> GetFeed();
+        public List<Article> GetByAuthor(string author);    
+        public List<Article> GetByUserName(string userName);    
 
 
         //public Article AddComment(string slug);

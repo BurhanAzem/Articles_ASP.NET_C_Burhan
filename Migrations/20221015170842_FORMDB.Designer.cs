@@ -11,8 +11,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Backend_Controller_Burhan.Migrations
 {
     [DbContext(typeof(DemoContext))]
-    [Migration("20221014152708_FinalTables")]
-    partial class FinalTables
+    [Migration("20221015170842_FORMDB")]
+    partial class FORMDB
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {

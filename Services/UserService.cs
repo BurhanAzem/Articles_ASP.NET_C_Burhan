@@ -7,25 +7,31 @@ namespace Backend_Controller_Burhan.Services
 {
     public class UserService : IUserService
     {
+        DemoContext _demoContext;
+        public UserService(DemoContext demoContext)
+        {
+            _demoContext = demoContext;
+        }
+
         public User Register(User user)
         {
-            var old = UserRepository.Users.FirstOrDefault(o => o.email == user.email);
+            var old = _demoContext.Users.ToList().FirstOrDefault(o => o.email == user.email);
             if (old != null)
                 return null;
-            UserRepository.Users.Add(user);
+            _demoContext.Users.Add(user);
             return user;
 
         }
 
         public User Get(string email)
         {
-            User user1 = UserRepository.Users.FirstOrDefault(o => o.email == email);
+            User user1 = _demoContext.Users.ToList().FirstOrDefault(o => o.email == email);
             if (user1 == null) return null;
             return user1;
         }
         public User GetL(UserLoginDto userlogin)
         {
-            User user = UserRepository.Users.FirstOrDefault(x => x.email.Equals(
+            User user = _demoContext.Users.ToList().FirstOrDefault(x => x.email.Equals(
                 userlogin.email, StringComparison.OrdinalIgnoreCase) && x.password.Equals(userlogin.password));
             if (user == null) return null;
             return user;
@@ -33,7 +39,7 @@ namespace Backend_Controller_Burhan.Services
 
         public User Update(User newuser)
         {
-            User olduser = UserRepository.Users.FirstOrDefault(newuser);
+            User olduser = _demoContext.Users.ToList().FirstOrDefault(newuser);
             if (olduser == null) return null;
             if (newuser.email != null)
                 olduser.password = newuser.password;
