@@ -5,7 +5,7 @@ namespace Backend_Controller_Burhan.Models
     public class User
     {
         //public string username { get; set; }
-        public string password { get; set; }
+        public string ?password { get; set; }
         [Key]
         public string email { get; set; }
         public Profile profile { get; set; }

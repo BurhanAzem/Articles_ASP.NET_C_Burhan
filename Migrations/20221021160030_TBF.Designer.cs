@@ -11,8 +11,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Backend_Controller_Burhan.Migrations
 {
     [DbContext(typeof(DemoContext))]
-    [Migration("20221015170842_FORMDB")]
-    partial class FORMDB
+    [Migration("20221021160030_TBF")]
+    partial class TBF
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -25,6 +25,7 @@ namespace Backend_Controller_Burhan.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<string>("authorusername")
+                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<string>("body")
@@ -57,7 +58,7 @@ namespace Backend_Controller_Burhan.Migrations
 
             modelBuilder.Entity("Backend_Controller_Burhan.Models.Comment", b =>
                 {
-                    b.Property<int>("id")
+                    b.Property<int?>("id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
@@ -65,6 +66,7 @@ namespace Backend_Controller_Burhan.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<string>("authorusername")
+                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<string>("body")
@@ -83,7 +85,7 @@ namespace Backend_Controller_Burhan.Migrations
 
                     b.HasIndex("authorusername");
 
-                    b.ToTable("Comment");
+                    b.ToTable("Comments");
                 });
 
             modelBuilder.Entity("Backend_Controller_Burhan.Models.Profile", b =>
@@ -98,11 +100,9 @@ namespace Backend_Controller_Burhan.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<string>("bio")
-                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<string>("image")
-                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.HasKey("username");
@@ -111,7 +111,7 @@ namespace Backend_Controller_Burhan.Migrations
 
                     b.HasIndex("Profileusername");
 
-                    b.ToTable("Profile");
+                    b.ToTable("profiles");
                 });
 
             modelBuilder.Entity("Backend_Controller_Burhan.Models.Tag", b =>
@@ -135,7 +135,6 @@ namespace Backend_Controller_Burhan.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<string>("password")
-                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<string>("profileusername")
@@ -152,7 +151,9 @@ namespace Backend_Controller_Burhan.Migrations
                 {
                     b.HasOne("Backend_Controller_Burhan.Models.Profile", "author")
                         .WithMany()
-                        .HasForeignKey("authorusername");
+                        .HasForeignKey("authorusername")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("author");
                 });
@@ -165,7 +166,9 @@ namespace Backend_Controller_Burhan.Migrations
 
                     b.HasOne("Backend_Controller_Burhan.Models.Profile", "author")
                         .WithMany()
-                        .HasForeignKey("authorusername");
+                        .HasForeignKey("authorusername")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("author");
                 });

@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace Backend_Controller_Burhan.Migrations
 {
-    public partial class FORMDB : Migration
+    public partial class TT1 : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -20,7 +20,7 @@ namespace Backend_Controller_Burhan.Migrations
                     createdAt = table.Column<DateTime>(type: "TEXT", nullable: true),
                     updatedAt = table.Column<DateTime>(type: "TEXT", nullable: true),
                     favoritesCount = table.Column<int>(type: "INTEGER", nullable: true),
-                    authorusername = table.Column<string>(type: "TEXT", nullable: true)
+                    authorusername = table.Column<string>(type: "TEXT", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -28,29 +28,28 @@ namespace Backend_Controller_Burhan.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Profile",
+                name: "profiles",
                 columns: table => new
                 {
                     username = table.Column<string>(type: "TEXT", nullable: false),
-                    bio = table.Column<string>(type: "TEXT", nullable: false),
-                    image = table.Column<string>(type: "TEXT", nullable: false),
+                    bio = table.Column<string>(type: "TEXT", nullable: true),
+                    image = table.Column<string>(type: "TEXT", nullable: true),
                     Articleslug = table.Column<string>(type: "TEXT", nullable: true),
                     Profileusername = table.Column<string>(type: "TEXT", nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Profile", x => x.username);
+                    table.PrimaryKey("PK_profiles", x => x.username);
                     table.ForeignKey(
-                        name: "FK_Profile_Articles_Articleslug",
+                        name: "FK_profiles_Articles_Articleslug",
                         column: x => x.Articleslug,
                         principalTable: "Articles",
                         principalColumn: "slug");
                     table.ForeignKey(
-                        name: "FK_Profile_Profile_Profileusername",
+                        name: "FK_profiles_profiles_Profileusername",
                         column: x => x.Profileusername,
-                        principalTable: "Profile",
+                        principalTable: "profiles",
                         principalColumn: "username");
-
                 });
 
             migrationBuilder.CreateTable(
@@ -71,7 +70,7 @@ namespace Backend_Controller_Burhan.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Comment",
+                name: "Comments",
                 columns: table => new
                 {
                     id = table.Column<int>(type: "INTEGER", nullable: false)
@@ -79,22 +78,23 @@ namespace Backend_Controller_Burhan.Migrations
                     createdAt = table.Column<DateTime>(type: "TEXT", nullable: true),
                     updatedAt = table.Column<DateTime>(type: "TEXT", nullable: true),
                     body = table.Column<string>(type: "TEXT", nullable: false),
-                    authorusername = table.Column<string>(type: "TEXT", nullable: true),
+                    authorusername = table.Column<string>(type: "TEXT", nullable: false),
                     Articleslug = table.Column<string>(type: "TEXT", nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Comment", x => x.id);
+                    table.PrimaryKey("PK_Comments", x => x.id);
                     table.ForeignKey(
-                        name: "FK_Comment_Articles_Articleslug",
+                        name: "FK_Comments_Articles_Articleslug",
                         column: x => x.Articleslug,
                         principalTable: "Articles",
                         principalColumn: "slug");
                     table.ForeignKey(
-                        name: "FK_Comment_Profile_authorusername",
+                        name: "FK_Comments_profiles_authorusername",
                         column: x => x.authorusername,
-                        principalTable: "Profile",
-                        principalColumn: "username");
+                        principalTable: "profiles",
+                        principalColumn: "username",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -102,16 +102,16 @@ namespace Backend_Controller_Burhan.Migrations
                 columns: table => new
                 {
                     email = table.Column<string>(type: "TEXT", nullable: false),
-                    password = table.Column<string>(type: "TEXT", nullable: false),
+                    password = table.Column<string>(type: "TEXT", nullable: true),
                     profileusername = table.Column<string>(type: "TEXT", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Users", x => x.email);
                     table.ForeignKey(
-                        name: "FK_Users_Profile_profileusername",
+                        name: "FK_Users_profiles_profileusername",
                         column: x => x.profileusername,
-                        principalTable: "Profile",
+                        principalTable: "profiles",
                         principalColumn: "username");
                 });
 
@@ -121,23 +121,23 @@ namespace Backend_Controller_Burhan.Migrations
                 column: "authorusername");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Comment_Articleslug",
-                table: "Comment",
+                name: "IX_Comments_Articleslug",
+                table: "Comments",
                 column: "Articleslug");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Comment_authorusername",
-                table: "Comment",
+                name: "IX_Comments_authorusername",
+                table: "Comments",
                 column: "authorusername");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Profile_Articleslug",
-                table: "Profile",
+                name: "IX_profiles_Articleslug",
+                table: "profiles",
                 column: "Articleslug");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Profile_Profileusername",
-                table: "Profile",
+                name: "IX_profiles_Profileusername",
+                table: "profiles",
                 column: "Profileusername");
 
             migrationBuilder.CreateIndex(
@@ -151,21 +151,22 @@ namespace Backend_Controller_Burhan.Migrations
                 column: "profileusername");
 
             migrationBuilder.AddForeignKey(
-                name: "FK_Articles_Profile_authorusername",
+                name: "FK_Articles_profiles_authorusername",
                 table: "Articles",
                 column: "authorusername",
-                principalTable: "Profile",
-                principalColumn: "username");
+                principalTable: "profiles",
+                principalColumn: "username",
+                onDelete: ReferentialAction.Cascade);
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropForeignKey(
-                name: "FK_Articles_Profile_authorusername",
+                name: "FK_Articles_profiles_authorusername",
                 table: "Articles");
 
             migrationBuilder.DropTable(
-                name: "Comment");
+                name: "Comments");
 
             migrationBuilder.DropTable(
                 name: "Tag");
@@ -174,7 +175,7 @@ namespace Backend_Controller_Burhan.Migrations
                 name: "Users");
 
             migrationBuilder.DropTable(
-                name: "Profile");
+                name: "profiles");
 
             migrationBuilder.DropTable(
                 name: "Articles");

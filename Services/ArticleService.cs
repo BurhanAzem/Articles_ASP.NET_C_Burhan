@@ -6,6 +6,7 @@ using Backend_Controller_Burhan.Repository;
 using Backend_Controller_Burhan.Dtos;
 using System.Security.Cryptography;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.EntityFrameworkCore;
 
 namespace Backend_Controller_Burhan.Services
 {
@@ -21,14 +22,16 @@ namespace Backend_Controller_Burhan.Services
         {
             article.createdAt = DateTime.Now;   
             article.updatedAt = DateTime.Now;
+            article.favoritesCount = article.favoritesCount + 1;    
             article.slug = StringExtensions.Slugify(article.title);
             article.author = user.profile;
-            _demoContext.Articles.ToList().Add(article);
+            _demoContext.Articles.Add(article);
+            _demoContext.SaveChanges();
             return article;
         }
         public Article Update(Article newarticle, string slug)
         {
-            var oldarticle = _demoContext.Articles.ToList().FirstOrDefault(x => x.slug.Equals(slug));
+            Article oldarticle = _demoContext.Articles.Where(x => x.slug == slug).FirstOrDefault();
             if (oldarticle == null)
                 return null;
             oldarticle.title = newarticle.title;
@@ -38,27 +41,42 @@ namespace Backend_Controller_Burhan.Services
         }
         public bool Delete(string slug)
         {
-            var article1 = _demoContext.Articles.ToList().FirstOrDefault(x => x.slug.Equals(slug));
-            if(article1 == null)
+            Article article = _demoContext.Articles.Where(x => x.slug == slug).FirstOrDefault();
+            if (article == null)
                 return false;
-            _demoContext.Articles.ToList().Remove(article1); 
+            _demoContext.Articles.Remove(article);
+            _demoContext.SaveChanges();
             return true;    
         }
         public List<Article> GetAll()
         {
-            return _demoContext.Articles.ToList();
+            List<Article> articles = _demoContext.Articles.ToList();
+            return articles;
         }
         public Article GetByslug(string slug)
         {
-            var article = _demoContext.Articles.ToList().FirstOrDefault(x => x.slug == slug);
+            Article article = _demoContext.Articles.Where(x => x.slug == slug).FirstOrDefault();
             return article;
         }
-        public Article favoriteOp(string slug,User CurrentUserDto, bool favorite)
+        public Article favoriteOp(string slug,User CurrentUser, bool favorite)
         {
-            var article = _demoContext.Articles.ToList().FirstOrDefault(O => O.slug == slug);
+            Article article = _demoContext.Articles.Where(x => x.slug == slug).FirstOrDefault();
             if (article == null) return null;
-            if (favorite) article.favorite.Add(CurrentUserDto.profile);
-            else article.favorite.Remove(CurrentUserDto.profile);
+            if (favorite)
+            {
+                Profile profile = CurrentUser.profile;
+                article.favorite.Add(profile);
+                _demoContext.Articles.Update(article);
+                _demoContext.SaveChanges();
+            }
+            else
+            {
+                Profile profile = CurrentUser.profile;
+                article.favorite.Remove(profile);
+                _demoContext.Articles.Update(article);
+                _demoContext.SaveChanges();
+            }
+
             return article;
         }
 
@@ -67,39 +85,43 @@ namespace Backend_Controller_Burhan.Services
             Random a = new Random();     
             int MyNumber = 0;
             MyNumber = a.Next(0, 10);
-            var article = _demoContext.Articles.ToList().FirstOrDefault(o => o.slug == slug);
+            Article article = _demoContext.Articles.Where(x => x.slug == slug).FirstOrDefault();
             if (article == null)
                 return null;
             comment.updatedAt = DateTime.Now;   
             comment.createdAt = DateTime.Now;
             comment.id = MyNumber;    
             article.comment.Add(comment);
+            _demoContext.Update(article);
+            _demoContext.SaveChanges();
             return comment;
         }
         public bool DeleteComment(string slug, Comment comment)
         {
-            var article = _demoContext.Articles.ToList().FirstOrDefault(o => o.slug == slug);
+            Article article = _demoContext.Articles.Where(x => x.slug == slug).FirstOrDefault();
             if (article == null)
                 return false;
-            article.comment.Remove(comment);
+            _demoContext.Comments.Remove(comment);
+            _demoContext.Remove(comment);
+            _demoContext.SaveChanges();
             return true;
         }
 
         public List<Article> GetFeed()
         {
-            var result = _demoContext.Articles.ToList().FindAll(o => !o.author.follow.IsNullOrEmpty());
+            var result = _demoContext.Articles.Where(o => !o.author.follow.IsNullOrEmpty()).ToList();
             return result;
         }
 
         public List<Article> GetByAuthor(string author)
         {
-            var result = _demoContext.Articles.ToList().FindAll(o => o.author.username == author);
+            List<Article> result = _demoContext.Articles.Where(o => o.author.username == author).ToList();
             return result;
         }
 
         public List<Article> GetByUserName(string userName)
         {
-            var result = ArticleRepository.Articles.FindAll(o => o.favorite.FirstOrDefault(o => o.username == userName).username == userName);
+            List<Article> result = _demoContext.Articles.Where(o => o.favorite.FirstOrDefault(o => o.username == userName).username == userName).ToList();   
             return result;
         }
     }

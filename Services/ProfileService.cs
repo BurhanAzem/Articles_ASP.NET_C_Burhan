@@ -14,17 +14,26 @@ namespace Backend_Controller_Burhan.Services
 
         public Profile getprofile(string username)
         {
-            var user = _demoContext.Users.ToList().FirstOrDefault(o => o.profile.username == username);
+            User user = _demoContext.Users.Where(o => o.profile.username == username).FirstOrDefault();
             if (user == null) return null;
             return user.profile;
         }
         public Profile followOp(string username,string email, bool follow)
         {
-            var user = _demoContext.Users.ToList().FirstOrDefault(O => O.profile.username == username);
-            var follower = _demoContext.Users.ToList().FirstOrDefault(O => O.email == email);
+            User user = _demoContext.Users.Where(o => o.profile.username == username).FirstOrDefault();
+            User follower = _demoContext.Users.Where(O => O.email == email).FirstOrDefault();
             if (user == null) return null;
-            if (follow) user.profile.follow.Add(follower.profile);
-            else user.profile.follow.Remove(follower.profile);            return user.profile;
+            if (follow)
+            {
+                user.profile.follow.Add(follower.profile);
+                _demoContext.SaveChanges();
+            }
+            else
+            {
+                user.profile.follow.Remove(follower.profile);
+                _demoContext.SaveChanges();
+            }
+                return user.profile;
         }
 
         

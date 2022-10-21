@@ -14,7 +14,7 @@ namespace Backend_Controller_Burhan.Models
         public DateTime? createdAt { get; set; }
         public DateTime? updatedAt { get; set; }
         public int ?favoritesCount { get; set; } = 0;   
-        public Profile ?author { get; set; }
+        public Profile author { get; set; }
         public List<Comment> ?comment { get; set; } = new List<Comment>();
         public List<Profile> ?favorite { get; set; } = new List<Profile>();
     }

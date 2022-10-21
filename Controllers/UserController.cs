@@ -13,6 +13,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Authentication;
 using System.Linq.Expressions;
 using System.Net.Mail;
+using System.Security.Principal;
 
 namespace Backend_Controller_Burhan.Controllers
 {
@@ -69,11 +70,12 @@ namespace Backend_Controller_Burhan.Controllers
         
         private User GetCurrentUser()
         {
-            var identity = HttpContext.User.Identity as ClaimsIdentity;
-
-            if (identity != null)
+            var Identity = HttpContext.User.Identity as ClaimsIdentity;
+            //Identity.RemoveClaim(Identity.FindFirst(o => o.Type == ClaimTypes.Email));
+            //Identity.AddClaims(claims);
+            if (Identity != null)
             {
-                var userClaims = identity.Claims;
+                var userClaims = Identity.Claims;
                 var Email = userClaims.FirstOrDefault(o => o.Type == ClaimTypes.Email)?.Value;
                 var CurrentUser = _userservices.Get(Email);
                 return CurrentUser;

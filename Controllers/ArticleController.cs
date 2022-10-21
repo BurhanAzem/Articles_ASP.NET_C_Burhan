@@ -36,7 +36,7 @@ namespace Backend_Controller_Burhan.Controllers
         }
 
 
-        // GET /api/articles                     *Not without query --later--
+        // GET /api/articles                    
         [HttpGet]
         [Authorize]
         public IActionResult GetAll()
@@ -62,7 +62,7 @@ namespace Backend_Controller_Burhan.Controllers
 
         // GET /api/articles?author=...
         [HttpGet("author")]
-        public IActionResult GetByAuthor([FromQuery] string author)
+        public IActionResult GetByAuthor(string author)
         {
             var user = GetCurrentUser();
             var result = _articaleService.GetByAuthor(author).Select(x => x.AsArticleDto(user));
@@ -72,9 +72,9 @@ namespace Backend_Controller_Burhan.Controllers
         }
 
         // GET /api/articles?UserName=...
-        [HttpGet("username")]
+        [HttpGet("{username}")]
         [Authorize]
-        public IActionResult GetByUsername([FromQuery] string username)
+        public IActionResult GetByUsername(string username)
         {
             var user = GetCurrentUser();
             var result = _articaleService.GetByUserName(username).Select(x => x.AsArticleDto(user));
