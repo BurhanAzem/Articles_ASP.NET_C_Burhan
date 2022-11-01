@@ -3,6 +3,7 @@ using System;
 using Backend_Controller_Burhan.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Backend_Controller_Burhan.Migrations
 {
     [DbContext(typeof(DemoContext))]
-    partial class DemoContextModelSnapshot : ModelSnapshot
+    [Migration("20221029195604_FinalTableEd2")]
+    partial class FinalTableEd2
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "6.0.9");
@@ -37,7 +39,6 @@ namespace Backend_Controller_Burhan.Migrations
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("profileusername")
-                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<string>("title")
@@ -141,7 +142,7 @@ namespace Backend_Controller_Burhan.Migrations
                     b.Property<string>("articleslug")
                         .HasColumnType("TEXT");
 
-                    b.HasKey("tag", "articleslug");
+                    b.HasKey("tag");
 
                     b.HasIndex("articleslug");
 
@@ -230,9 +231,7 @@ namespace Backend_Controller_Burhan.Migrations
                 {
                     b.HasOne("Backend_Controller_Burhan.Models.Article", "article")
                         .WithMany("tagList")
-                        .HasForeignKey("articleslug")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("articleslug");
 
                     b.Navigation("article");
                 });
@@ -267,8 +266,7 @@ namespace Backend_Controller_Burhan.Migrations
                 {
                     b.Navigation("FavoritArticle");
 
-                    b.Navigation("author")
-                        .IsRequired();
+                    b.Navigation("author");
 
                     b.Navigation("comment");
 

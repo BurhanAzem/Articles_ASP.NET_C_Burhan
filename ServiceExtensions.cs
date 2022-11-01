@@ -13,8 +13,9 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Authentication;
 using System.Linq.Expressions;
 using System.Net.Mail;
+using System.Diagnostics;
 
-public static class EtintionesMethod
+public static class ServiceExtenion
 {
     public static ArticleDto AsArticleDto(this Article article, User user)
     {
@@ -28,16 +29,25 @@ public static class EtintionesMethod
             updatedAt = article.updatedAt,
             favoritesCount = article.favoritesCount,
             author = article.author,
-            favorited = article.favorite.Contains(user.profile),
+            //favorited = article.favorite.Contains(user.profile),
         };
     }
     public static Article AsArticle(this ArticleDto articleDto, User user)
     {
+        List<Tag> listtag = new List<Tag>();
+        for (int i = 0; i < articleDto.tagList.Count; i++)
+        {
+            Tag tag = new Tag();
+            tag.tag = articleDto.tagList[i];
+            listtag.Add(tag);
+        }
         return new Article()
         {
             title = articleDto.title,
             description = articleDto.description,
             body = articleDto.body,
+            profileusername = user.profile.username,
+            tagList = listtag,
             author = user.profile,
         };
     }
@@ -59,7 +69,7 @@ public static class EtintionesMethod
             username = profile.username,
             bio = profile.bio,
             image = profile.image,
-            follow = profile.follow.Contains(user.profile)
+            //follow = profile.followers.Contains(user.profile)
         };
     }
     public static CommentDto AsCommentDto(this Comment comment)

@@ -21,18 +21,18 @@ namespace Backend_Controller_Burhan.Repository
                     username = "BurhanAzem",
                     image = "higicgisbgcyugfuywcjyvuyecg",
                     bio = "9iji99i899u8hi99j",
-                    follow = new()
-                        {
-                            new()
-                            {
+                    //followers = new()
+                    //    {
+                    //        new()
+                    //        {
                                 
-                                username = "BurhanAzem",
-                                image = "higicgisbgcyugfuywcjyvuyecg",
-                                bio = "9iji99i899u8hi99j",
-                                follow = null
+                    //            username = "BurhanAzem",
+                    //            image = "higicgisbgcyugfuywcjyvuyecg",
+                    //            bio = "9iji99i899u8hi99j",
+                    //            followers = null
                                 
-                            }
-                    }     
+                    //        }
+                    //}     
                     
                 },
                 comment = new()
@@ -60,7 +60,7 @@ namespace Backend_Controller_Burhan.Repository
                     username = "BurhanAzem",
                     image = "higicgisbgcyugfuywcjyvuyecg",
                     bio = "9iji99i899u8hi99j",
-                    follow = null
+                    //followers = null
                 
                 },
             }

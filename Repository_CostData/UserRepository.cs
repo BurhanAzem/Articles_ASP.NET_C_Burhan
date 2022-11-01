@@ -13,7 +13,7 @@ namespace Backend_Controller_Burhan.Repository
                     username = "BurhanAzem",
                     image = "higicgisbgcyugfuywcjyvuyecg",
                     bio = "9iji99i899u8hi99j",
-                    follow = null
+                    //followers = null
                 } ,
                 email = "burhan12sab@gmail.com",
                 password = "my-password"
@@ -25,7 +25,7 @@ namespace Backend_Controller_Burhan.Repository
                     username = "Areej",
                     image = "higicgisbgcyugfuywcjyvuyecg",
                     bio = "9iji99i899u8hi99j",
-                    follow = null
+                    //followers = null
                 } ,
                 email = "burhan13sab@gmail.com",
                 password = "my-mom"

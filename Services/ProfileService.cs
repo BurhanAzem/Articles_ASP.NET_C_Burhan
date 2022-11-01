@@ -25,12 +25,14 @@ namespace Backend_Controller_Burhan.Services
             if (user == null) return null;
             if (follow)
             {
-                user.profile.follow.Add(follower.profile);
+                user.profile.ProfileFolloweres.Add(follower.profile);
+                follower.profile.ProfileFollowing.Add(user.profile);
                 _demoContext.SaveChanges();
             }
             else
             {
-                user.profile.follow.Remove(follower.profile);
+                user.profile.ProfileFolloweres.Remove(follower.profile);
+                follower.profile.ProfileFollowing.Remove(user.profile);
                 _demoContext.SaveChanges();
             }
                 return user.profile;

@@ -8,6 +8,13 @@ namespace Backend_Controller_Burhan.Models
         public string username { get; set; }
         public string ?bio { get; set; }
         public string ?image { get; set; }
-        public List<Profile> ?follow { get; set; } = new List<Profile>();
+        public User ?User { get; set; }  
+        public string ?emailuser { get; set; }   
+        public Article ?article { get; set; }    
+        public string ?articleslug { get; set; }
+        public IList<ArticleProfile> ?FavoritArticle { get; set; }
+
+        public List<Profile> ? ProfileFollowing { get; set; }
+        public List<Profile> ? ProfileFolloweres { get; set; } 
     }
 }

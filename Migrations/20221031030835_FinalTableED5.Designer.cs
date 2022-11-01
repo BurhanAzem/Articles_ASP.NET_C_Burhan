@@ -11,8 +11,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Backend_Controller_Burhan.Migrations
 {
     [DbContext(typeof(DemoContext))]
-    [Migration("20221021160030_TBF")]
-    partial class TBF
+    [Migration("20221031030835_FinalTableED5")]
+    partial class FinalTableED5
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -22,10 +22,6 @@ namespace Backend_Controller_Burhan.Migrations
             modelBuilder.Entity("Backend_Controller_Burhan.Models.Article", b =>
                 {
                     b.Property<string>("slug")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("authorusername")
-                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<string>("body")
@@ -42,6 +38,9 @@ namespace Backend_Controller_Burhan.Migrations
                     b.Property<int?>("favoritesCount")
                         .HasColumnType("INTEGER");
 
+                    b.Property<string>("profileusername")
+                        .HasColumnType("TEXT");
+
                     b.Property<string>("title")
                         .IsRequired()
                         .HasColumnType("TEXT");
@@ -51,9 +50,32 @@ namespace Backend_Controller_Burhan.Migrations
 
                     b.HasKey("slug");
 
-                    b.HasIndex("authorusername");
-
                     b.ToTable("Articles");
+                });
+
+            modelBuilder.Entity("Backend_Controller_Burhan.Models.ArticleProfile", b =>
+                {
+                    b.Property<string>("username")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("slug")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Profileusername")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("articleslug")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("username", "slug");
+
+                    b.HasIndex("Profileusername");
+
+                    b.HasIndex("articleslug");
+
+                    b.ToTable("ArticleProfiles");
                 });
 
             modelBuilder.Entity("Backend_Controller_Burhan.Models.Comment", b =>
@@ -62,11 +84,10 @@ namespace Backend_Controller_Burhan.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<string>("Articleslug")
+                    b.Property<string>("articleslug")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("authorusername")
-                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<string>("body")
@@ -81,7 +102,7 @@ namespace Backend_Controller_Burhan.Migrations
 
                     b.HasKey("id");
 
-                    b.HasIndex("Articleslug");
+                    b.HasIndex("articleslug");
 
                     b.HasIndex("authorusername");
 
@@ -93,13 +114,13 @@ namespace Backend_Controller_Burhan.Migrations
                     b.Property<string>("username")
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("Articleslug")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("Profileusername")
+                    b.Property<string>("articleslug")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("bio")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("emailuser")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("image")
@@ -107,9 +128,8 @@ namespace Backend_Controller_Burhan.Migrations
 
                     b.HasKey("username");
 
-                    b.HasIndex("Articleslug");
-
-                    b.HasIndex("Profileusername");
+                    b.HasIndex("articleslug")
+                        .IsUnique();
 
                     b.ToTable("profiles");
                 });
@@ -119,14 +139,14 @@ namespace Backend_Controller_Burhan.Migrations
                     b.Property<string>("tag")
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("Articleslug")
+                    b.Property<string>("articleslug")
                         .HasColumnType("TEXT");
 
-                    b.HasKey("tag");
+                    b.HasKey("tag", "articleslug");
 
-                    b.HasIndex("Articleslug");
+                    b.HasIndex("articleslug");
 
-                    b.ToTable("Tag");
+                    b.ToTable("Tages");
                 });
 
             modelBuilder.Entity("Backend_Controller_Burhan.Models.User", b =>
@@ -138,80 +158,128 @@ namespace Backend_Controller_Burhan.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<string>("profileusername")
+                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.HasKey("email");
 
-                    b.HasIndex("profileusername");
+                    b.HasIndex("profileusername")
+                        .IsUnique();
 
                     b.ToTable("Users");
                 });
 
-            modelBuilder.Entity("Backend_Controller_Burhan.Models.Article", b =>
+            modelBuilder.Entity("ProfileProfile", b =>
                 {
-                    b.HasOne("Backend_Controller_Burhan.Models.Profile", "author")
-                        .WithMany()
-                        .HasForeignKey("authorusername")
+                    b.Property<string>("ProfileFolloweresusername")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("ProfileFollowingusername")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("ProfileFolloweresusername", "ProfileFollowingusername");
+
+                    b.HasIndex("ProfileFollowingusername");
+
+                    b.ToTable("ProfileProfile");
+                });
+
+            modelBuilder.Entity("Backend_Controller_Burhan.Models.ArticleProfile", b =>
+                {
+                    b.HasOne("Backend_Controller_Burhan.Models.Profile", "Profile")
+                        .WithMany("FavoritArticle")
+                        .HasForeignKey("Profileusername")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("author");
+                    b.HasOne("Backend_Controller_Burhan.Models.Article", "article")
+                        .WithMany("FavoritArticle")
+                        .HasForeignKey("articleslug")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Profile");
+
+                    b.Navigation("article");
                 });
 
             modelBuilder.Entity("Backend_Controller_Burhan.Models.Comment", b =>
                 {
-                    b.HasOne("Backend_Controller_Burhan.Models.Article", null)
+                    b.HasOne("Backend_Controller_Burhan.Models.Article", "article")
                         .WithMany("comment")
-                        .HasForeignKey("Articleslug");
+                        .HasForeignKey("articleslug");
 
                     b.HasOne("Backend_Controller_Burhan.Models.Profile", "author")
                         .WithMany()
-                        .HasForeignKey("authorusername")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("authorusername");
+
+                    b.Navigation("article");
 
                     b.Navigation("author");
                 });
 
             modelBuilder.Entity("Backend_Controller_Burhan.Models.Profile", b =>
                 {
-                    b.HasOne("Backend_Controller_Burhan.Models.Article", null)
-                        .WithMany("favorite")
-                        .HasForeignKey("Articleslug");
+                    b.HasOne("Backend_Controller_Burhan.Models.Article", "article")
+                        .WithOne("author")
+                        .HasForeignKey("Backend_Controller_Burhan.Models.Profile", "articleslug");
 
-                    b.HasOne("Backend_Controller_Burhan.Models.Profile", null)
-                        .WithMany("follow")
-                        .HasForeignKey("Profileusername");
+                    b.Navigation("article");
                 });
 
             modelBuilder.Entity("Backend_Controller_Burhan.Models.Tag", b =>
                 {
-                    b.HasOne("Backend_Controller_Burhan.Models.Article", null)
+                    b.HasOne("Backend_Controller_Burhan.Models.Article", "article")
                         .WithMany("tagList")
-                        .HasForeignKey("Articleslug");
+                        .HasForeignKey("articleslug")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("article");
                 });
 
             modelBuilder.Entity("Backend_Controller_Burhan.Models.User", b =>
                 {
                     b.HasOne("Backend_Controller_Burhan.Models.Profile", "profile")
-                        .WithMany()
-                        .HasForeignKey("profileusername");
+                        .WithOne("User")
+                        .HasForeignKey("Backend_Controller_Burhan.Models.User", "profileusername")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("profile");
                 });
 
+            modelBuilder.Entity("ProfileProfile", b =>
+                {
+                    b.HasOne("Backend_Controller_Burhan.Models.Profile", null)
+                        .WithMany()
+                        .HasForeignKey("ProfileFolloweresusername")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Backend_Controller_Burhan.Models.Profile", null)
+                        .WithMany()
+                        .HasForeignKey("ProfileFollowingusername")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("Backend_Controller_Burhan.Models.Article", b =>
                 {
-                    b.Navigation("comment");
+                    b.Navigation("FavoritArticle");
 
-                    b.Navigation("favorite");
+                    b.Navigation("author");
+
+                    b.Navigation("comment");
 
                     b.Navigation("tagList");
                 });
 
             modelBuilder.Entity("Backend_Controller_Burhan.Models.Profile", b =>
                 {
-                    b.Navigation("follow");
+                    b.Navigation("FavoritArticle");
+
+                    b.Navigation("User");
                 });
 #pragma warning restore 612, 618
         }

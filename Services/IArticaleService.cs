@@ -12,12 +12,13 @@ namespace Backend_Controller_Burhan.Services
         public Article GetByslug(string slug);
         public Comment AddComment(string slug, Comment comment);   
         public Article favoriteOp(string slug,User CurrentUserDto, bool favorite);
-        public bool DeleteComment(string slug, Comment comment);
+        public bool DeleteComment(string slug, int id);
         public List<Article> GetFeed();
         public List<Article> GetByAuthor(string author);    
-        public List<Article> GetByUserName(string userName);    
-
-
+        public List<Article> GetByUserName(string userName);
+        public List<Article> GetByTagList(string tag);
+        public List<Comment> GetComments(string slug);
+        public List<Tag> GetTags();
         //public Article AddComment(string slug);
     }
 }

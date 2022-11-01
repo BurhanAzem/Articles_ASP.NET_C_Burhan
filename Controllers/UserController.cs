@@ -23,15 +23,12 @@ namespace Backend_Controller_Burhan.Controllers
     {
         private IUserService _userservices;
         private readonly  IConfiguration _configuration;
-        //private IHttpContextAccessor _httpContextAccessor;
-        //private  UserManager<IdentityUser> _userManager;
+
 
         public UserController(IUserService userservices, IConfiguration configuration)
         {
             _userservices = userservices;
             _configuration = configuration;
-            //_httpContextAccessor = httpContextAccessor;
-            //_userManager = userManager;  
         }
 
         // POST /api/users
@@ -50,6 +47,7 @@ namespace Backend_Controller_Burhan.Controllers
         [Authorize]
         public IActionResult GetCurrent()
         {
+            throw new Exception();
             var currentUser = GetCurrentUser();
             var userDto = currentUser.AsUserDto();
             if (userDto == null)
@@ -71,8 +69,6 @@ namespace Backend_Controller_Burhan.Controllers
         private User GetCurrentUser()
         {
             var Identity = HttpContext.User.Identity as ClaimsIdentity;
-            //Identity.RemoveClaim(Identity.FindFirst(o => o.Type == ClaimTypes.Email));
-            //Identity.AddClaims(claims);
             if (Identity != null)
             {
                 var userClaims = Identity.Claims;

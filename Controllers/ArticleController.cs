@@ -61,7 +61,8 @@ namespace Backend_Controller_Burhan.Controllers
         }
 
         // GET /api/articles?author=...
-        [HttpGet("author")]
+        [HttpGet("GetByAuthor")]
+        [Authorize]
         public IActionResult GetByAuthor(string author)
         {
             var user = GetCurrentUser();
@@ -72,29 +73,19 @@ namespace Backend_Controller_Burhan.Controllers
         }
 
         // GET /api/articles?UserName=...
-        [HttpGet("{username}")]
+        [HttpGet("GetByFavoriteUserName")]
         [Authorize]
-        public IActionResult GetByUsername(string username)
+        public IActionResult GetByFavoriteUserName(string favorited)
         {
             var user = GetCurrentUser();
-            var result = _articaleService.GetByUserName(username).Select(x => x.AsArticleDto(user));
+            var result = _articaleService.GetByUserName(favorited).Select(x => x.AsArticleDto(user));
             if (result == null)
                 return NotFound();
             return Ok(result);
         }
 
         // GET /api/articles?tagList=...
-        [HttpGet("tagList")]
-        [Authorize]
-        public IActionResult GetByTagList([FromQuery] string tag)
-        {
-            var user = GetCurrentUser();
-            //var result = ArticleRepository.Articles.FindAll(o => o.tagList.Contains(tag)).Select(x => x.AsArticleDto(user));
-            return Ok();
-        }
-
-        // PUT /api/articles/:slug
-        [HttpPut("{slug}")]
+        [HttpGet("GetByTagList")]
         [Authorize]
         public IActionResult Update(string slug, [FromBody]ArticleDto articleDto)
         {
@@ -130,7 +121,7 @@ namespace Backend_Controller_Burhan.Controllers
         [Authorize]
         public IActionResult GetComments(string slug)
         {
-            var result = _articaleService.GetByslug(slug).comment.Select(x => x.AsCommentDto());
+            var result = _articaleService.GetComments(slug).Select(x => x.AsCommentDto());
             return Ok(result);
         }
 
@@ -149,9 +140,9 @@ namespace Backend_Controller_Burhan.Controllers
         // DELETE /api/articles/:slug/comments/:id
         [HttpDelete("{slug}/comments/{commentsId}")]
         [Authorize]
-        public IActionResult DeleteComments(string slug, int id)
+        public IActionResult DeleteComments(string slug, int commentsId)
         {
-            var result = _articaleService.GetByslug(slug).comment.Remove(_articaleService.GetByslug(slug).comment.FirstOrDefault(o => o.id.Equals(id)));
+            var result = _articaleService.DeleteComment(slug, commentsId);
             if (result == null)
                 return NotFound();
             return Ok("Done");
@@ -186,14 +177,15 @@ namespace Backend_Controller_Burhan.Controllers
 
             return Ok(result);
         }
-        [HttpGet]
-        [Route("tags")]
+
+        [HttpGet("tags")]
         [Authorize]
         public IActionResult GetTags()
         {
-            var result = _articaleService.GetAll();
+            var result = _articaleService;
             return Ok(result);
         }
+
         public User GetCurrentUser()
         {
             var identity = HttpContext.User.Identity as ClaimsIdentity;

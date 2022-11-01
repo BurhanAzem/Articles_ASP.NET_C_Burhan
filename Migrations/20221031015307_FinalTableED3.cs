@@ -4,7 +4,7 @@
 
 namespace Backend_Controller_Burhan.Migrations
 {
-    public partial class TBF : Migration
+    public partial class FinalTableED3 : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {

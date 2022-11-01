@@ -1,6 +1,7 @@
 ﻿using Backend_Controller_Burhan.Dtos;
 using Backend_Controller_Burhan.Models;
 using Backend_Controller_Burhan.Repository;
+using Microsoft.EntityFrameworkCore;
 using SQLitePCL;
 using System.Linq;
 
@@ -16,7 +17,7 @@ namespace Backend_Controller_Burhan.Services
 
         public User Register(User user)
         {
-            var old = _demoContext.Users.FirstOrDefault(o => o.email == user.email);
+            var old = _demoContext.Users.Where(o => o.email == user.email).FirstOrDefault();
             if (old != null)
                 return null;
             _demoContext.Users.Add(user);
@@ -27,7 +28,7 @@ namespace Backend_Controller_Burhan.Services
 
         public User Get(string email)
         {
-            User user = _demoContext.Users.Where(o => o.email == email).FirstOrDefault();
+            User user =  _demoContext.Users.Where(o => o.email == email).FirstOrDefault();
             if (user == null) return null;
             //user.profile = _demoContext.profiles.ToList().FirstOrDefault(o => o.username == user.profile.username);
             return user;
@@ -59,8 +60,8 @@ namespace Backend_Controller_Burhan.Services
             if (newuser.profile.username != null)
                 olduser.profile.username = newuser.profile.username;
 
-            if (newuser.profile.follow != null)
-                olduser.profile.follow = newuser.profile.follow;
+            if (newuser.profile.ProfileFolloweres != null)
+                olduser.profile.ProfileFolloweres = newuser.profile.ProfileFolloweres;
             //_demoContext.Users.Add(olduser);
             _demoContext.SaveChanges();
             return olduser;

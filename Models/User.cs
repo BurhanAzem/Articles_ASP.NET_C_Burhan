@@ -9,6 +9,7 @@ namespace Backend_Controller_Burhan.Models
         [Key]
         public string email { get; set; }
         public Profile profile { get; set; }
+        public string ?profileusername { get; set; }    
         //public string bio { get; set; }
         //public string image { get; set; }
     }

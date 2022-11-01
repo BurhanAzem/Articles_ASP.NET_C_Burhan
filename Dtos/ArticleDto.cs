@@ -10,7 +10,7 @@ namespace Backend_Controller_Burhan.Dtos
         public string ?body { get; set; }
         public DateTime? createdAt { get; set; }
         public DateTime? updatedAt { get; set; }
-        public List<string> ?tagList { get; set; } = new List<string>() { "reactjs", "angularjs" };
+        public List<string> ?tagList { get; set; } = new List<string>();
         public bool ? favorited { get; set; } = false;
         public int ? favoritesCount { get; set; }
         public Profile ?author { get; set; }

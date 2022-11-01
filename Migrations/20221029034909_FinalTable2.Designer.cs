@@ -3,6 +3,7 @@ using System;
 using Backend_Controller_Burhan.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Backend_Controller_Burhan.Migrations
 {
     [DbContext(typeof(DemoContext))]
-    partial class DemoContextModelSnapshot : ModelSnapshot
+    [Migration("20221029034909_FinalTable2")]
+    partial class FinalTable2
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "6.0.9");
@@ -87,6 +89,7 @@ namespace Backend_Controller_Burhan.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<string>("authorusername")
+                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<string>("body")
@@ -114,12 +117,14 @@ namespace Backend_Controller_Burhan.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<string>("articleslug")
+                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<string>("bio")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("emailuser")
+                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<string>("image")
@@ -141,7 +146,7 @@ namespace Backend_Controller_Burhan.Migrations
                     b.Property<string>("articleslug")
                         .HasColumnType("TEXT");
 
-                    b.HasKey("tag", "articleslug");
+                    b.HasKey("tag");
 
                     b.HasIndex("articleslug");
 
@@ -170,15 +175,15 @@ namespace Backend_Controller_Burhan.Migrations
 
             modelBuilder.Entity("ProfileProfile", b =>
                 {
-                    b.Property<string>("ProfileFolloweresusername")
+                    b.Property<string>("ProfileFollowerusername")
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("ProfileFollowingusername")
+                    b.Property<string>("ProfileFollowusername")
                         .HasColumnType("TEXT");
 
-                    b.HasKey("ProfileFolloweresusername", "ProfileFollowingusername");
+                    b.HasKey("ProfileFollowerusername", "ProfileFollowusername");
 
-                    b.HasIndex("ProfileFollowingusername");
+                    b.HasIndex("ProfileFollowusername");
 
                     b.ToTable("ProfileProfile");
                 });
@@ -210,7 +215,9 @@ namespace Backend_Controller_Burhan.Migrations
 
                     b.HasOne("Backend_Controller_Burhan.Models.Profile", "author")
                         .WithMany()
-                        .HasForeignKey("authorusername");
+                        .HasForeignKey("authorusername")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("article");
 
@@ -221,7 +228,9 @@ namespace Backend_Controller_Burhan.Migrations
                 {
                     b.HasOne("Backend_Controller_Burhan.Models.Article", "article")
                         .WithOne("author")
-                        .HasForeignKey("Backend_Controller_Burhan.Models.Profile", "articleslug");
+                        .HasForeignKey("Backend_Controller_Burhan.Models.Profile", "articleslug")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("article");
                 });
@@ -230,9 +239,7 @@ namespace Backend_Controller_Burhan.Migrations
                 {
                     b.HasOne("Backend_Controller_Burhan.Models.Article", "article")
                         .WithMany("tagList")
-                        .HasForeignKey("articleslug")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("articleslug");
 
                     b.Navigation("article");
                 });
@@ -252,13 +259,13 @@ namespace Backend_Controller_Burhan.Migrations
                 {
                     b.HasOne("Backend_Controller_Burhan.Models.Profile", null)
                         .WithMany()
-                        .HasForeignKey("ProfileFolloweresusername")
+                        .HasForeignKey("ProfileFollowerusername")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("Backend_Controller_Burhan.Models.Profile", null)
                         .WithMany()
-                        .HasForeignKey("ProfileFollowingusername")
+                        .HasForeignKey("ProfileFollowusername")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
@@ -279,7 +286,8 @@ namespace Backend_Controller_Burhan.Migrations
                 {
                     b.Navigation("FavoritArticle");
 
-                    b.Navigation("User");
+                    b.Navigation("User")
+                        .IsRequired();
                 });
 #pragma warning restore 612, 618
         }

@@ -21,10 +21,10 @@ namespace Backend_Controller_Burhan.Services
         public Article Create(Article article, User user)
         {
             article.createdAt = DateTime.Now;   
-            article.updatedAt = DateTime.Now;
-            article.favoritesCount = article.favoritesCount + 1;    
+            article.updatedAt = DateTime.Now;    
             article.slug = StringExtensions.Slugify(article.title);
             article.author = user.profile;
+            article.tagList.ForEach(a => a.articleslug = article.slug);
             _demoContext.Articles.Add(article);
             _demoContext.SaveChanges();
             return article;
@@ -60,20 +60,29 @@ namespace Backend_Controller_Burhan.Services
         }
         public Article favoriteOp(string slug,User CurrentUser, bool favorite)
         {
-            Article article = _demoContext.Articles.Where(x => x.slug == slug).FirstOrDefault();
+            Article article = _demoContext.Articles.Include(a => a.FavoritArticle).Where(x => x.slug == slug).FirstOrDefault();
+            Profile profile = CurrentUser.profile;
             if (article == null) return null;
+            if (profile == null) return null;
+            ArticleProfile articleProfile = new()
+            {
+                slug = article.slug,
+                article = article,
+                username = profile.username,
+                Profile = profile
+            };
+    
             if (favorite)
             {
-                Profile profile = CurrentUser.profile;
-                article.favorite.Add(profile);
-                _demoContext.Articles.Update(article);
+                article.FavoritArticle.Add(articleProfile);
+                article.favoritesCount = article.FavoritArticle.Count;
                 _demoContext.SaveChanges();
             }
             else
             {
-                Profile profile = CurrentUser.profile;
-                article.favorite.Remove(profile);
-                _demoContext.Articles.Update(article);
+                article.FavoritArticle.Remove(articleProfile);
+                article.favoritesCount = article.FavoritArticle.Count;
+                _demoContext.Update(article);
                 _demoContext.SaveChanges();
             }
 
@@ -82,34 +91,31 @@ namespace Backend_Controller_Burhan.Services
 
         public Comment AddComment(string slug,Comment comment)
         {
-            Random a = new Random();     
-            int MyNumber = 0;
-            MyNumber = a.Next(0, 10);
+            
             Article article = _demoContext.Articles.Where(x => x.slug == slug).FirstOrDefault();
             if (article == null)
                 return null;
             comment.updatedAt = DateTime.Now;   
             comment.createdAt = DateTime.Now;
-            comment.id = MyNumber;    
             article.comment.Add(comment);
-            _demoContext.Update(article);
             _demoContext.SaveChanges();
             return comment;
         }
-        public bool DeleteComment(string slug, Comment comment)
+        public bool DeleteComment(string slug, int id)
         {
-            Article article = _demoContext.Articles.Where(x => x.slug == slug).FirstOrDefault();
+            Article article = _demoContext.Articles.Include(a => a.comment).Where(x => x.slug == slug).FirstOrDefault();
             if (article == null)
                 return false;
-            _demoContext.Comments.Remove(comment);
-            _demoContext.Remove(comment);
+            Comment comment1 = _demoContext.Comments.Where(a => a.id == id).FirstOrDefault();
+            if (comment1 == null) return false;
+            article.comment.Remove(comment1);
             _demoContext.SaveChanges();
             return true;
         }
 
         public List<Article> GetFeed()
         {
-            var result = _demoContext.Articles.Where(o => !o.author.follow.IsNullOrEmpty()).ToList();
+            var result = _demoContext.Articles.Where(o => !o.author.ProfileFolloweres.IsNullOrEmpty()).ToList();
             return result;
         }
 
@@ -118,10 +124,52 @@ namespace Backend_Controller_Burhan.Services
             List<Article> result = _demoContext.Articles.Where(o => o.author.username == author).ToList();
             return result;
         }
-
+         
         public List<Article> GetByUserName(string userName)
         {
-            List<Article> result = _demoContext.Articles.Where(o => o.favorite.FirstOrDefault(o => o.username == userName).username == userName).ToList();   
+            List<Article> articles = _demoContext.Articles.Include(a => a.FavoritArticle).ToList();
+            List<Article> result = new List<Article>();
+            for (int i = 0; i < articles.Count; i++)
+            {
+                for(int j = 0; j < articles[i].FavoritArticle.Count; j++)
+                {
+                    if (articles[i].FavoritArticle[j].username == userName)
+                    {
+                        result.Add(articles[i]);
+                        break;
+                    }
+                }
+            }
+            return result;
+        }
+
+        public List<Comment> GetComments(string slug)
+        {
+            Article article = _demoContext.Articles.Include(a => a.comment).Where(a => a.slug == slug).FirstOrDefault();
+            return article.comment.ToList();
+        }
+
+        public List<Article> GetByTagList(string tag)
+        {
+            List<Article> articles = _demoContext.Articles.Include(a => a.tagList).ToList();
+            List<Article> result = new List<Article>();
+            for (int i = 0; i < articles.Count; i++)
+            {
+                for (int j = 0; j < articles[i].FavoritArticle.Count; j++)
+                {
+                    if (articles[i].tagList[j].tag == tag)
+                    {
+                        result.Add(articles[i]);
+                        break;
+                    }
+                }
+            }
+            return result;
+        }
+
+        public List<Tag> GetTags()
+        {
+            List<Tag> result = _demoContext.Tages.ToList(); 
             return result;
         }
     }
